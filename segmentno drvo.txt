@@ -1,0 +1,237 @@
+#include <iostream>
+
+#include <algorithm>
+
+#include <cstdlib>
+
+#include <ctime>
+
+
+
+using namespace std;
+
+
+
+void build(int a[], int v, int tl, int tr, int t[]) {
+
+    if (tl == tr) {
+
+        t[v] = a[tl];
+
+    } else {
+
+        int tm = (tl + tr) / 2;
+
+        build(a, v*2, tl, tm, t);
+
+        build(a, v*2+1, tm+1, tr, t);
+
+        t[v] = t[v*2] + t[v*2+1];
+
+    }
+
+}
+
+void buildMax(int a[], int v, int tl, int tr, int t[]) {
+
+    if (tl == tr) {
+
+        t[v] = a[tl];
+
+    } else {
+
+        int tm = (tl + tr) / 2;
+
+        buildMax(a, v*2, tl, tm, t);
+
+        buildMax(a, v*2+1, tm+1, tr, t);
+
+        t[v] = max(t[v*2], t[v*2+1]);
+
+    }
+
+}
+
+void buildMin(int a[], int v, int tl, int tr, int t[]) {
+
+    if (tl == tr) {
+
+        t[v] = a[tl];
+
+    } else {
+
+        int tm = (tl + tr) / 2;
+
+        buildMin(a, v*2, tl, tm, t);
+
+        buildMin(a, v*2+1, tm+1, tr, t);
+
+        t[v] = min(t[v*2], t[v*2+1]);
+
+    }
+
+}
+
+int opseg(int v, int tl, int tr, int l, int r, int t[]) {
+
+    if (r < tl || tr < l)
+
+        return 0;
+
+    if (l <= tl && tr <= r)
+
+        return t[v];
+
+    int tm = (tl + tr) / 2;
+
+    return opseg(2 * v, tl, tm, l, r, t)
+
+           + opseg(2 * v + 1, tm + 1, tr, l, r, t);
+
+}
+
+int opsegMax(int v, int tl, int tr, int l, int r, int t[]) {
+
+    if (r < tl || tr < l)
+
+        return 0;
+
+    if (l <= tl && tr <= r)
+
+        return t[v];
+
+    int tm = (tl + tr) / 2;
+
+    return max(opsegMax(2 * v, tl, tm, l, r, t)
+
+           , opsegMax(2 * v + 1, tm + 1, tr, l, r, t));
+
+}
+
+int opsegMin(int v, int tl, int tr, int l, int r, int t[]) {
+
+    if (r < tl || tr < l)
+
+        return 2147483647;
+
+    if (l <= tl && tr <= r)
+
+        return t[v];
+
+    int tm = (tl + tr) / 2;
+
+    return min(opsegMin(2 * v, tl, tm, l, r, t)
+
+           , opsegMin(2 * v + 1, tm + 1, tr, l, r, t));
+
+}
+
+void update (int v, int tl, int tr, int i, int val, int t[]) {
+
+    if (tl==tr) {
+
+        t[v]=val;
+
+    }
+
+    else {
+
+        int tm=(tl+tr)/2;
+
+        if (tm>=i) {
+
+            update(v*2, tl, tm, i, val, t);
+
+        }
+
+        else { update(v*2+1, tm+1, tr, i, val, t); }
+
+        t[v]=t[v*2]+t[v*2+1];
+
+    }
+
+}
+
+void updateMax (int v, int tl, int tr, int i, int val, int t[]) {
+
+    if (tl==tr) {
+
+        t[v]=val;
+
+    }
+
+    else {
+
+        int tm=(tl+tr)/2;
+
+        if (tm>=i) {
+
+            updateMax(v*2, tl, tm, i, val, t);
+
+        }
+
+        else { updateMax(v*2+1, tm+1, tr, i, val, t); }
+
+        t[v]=max(t[v*2], t[v*2+1]);
+
+    }
+
+}
+
+void updateMin (int v, int tl, int tr, int i, int val, int t[]) {
+
+    if (tl==tr) {
+
+        t[v]=val;
+
+    }
+
+    else {
+
+        int tm=(tl+tr)/2;
+
+        if (tm>=i) {
+
+            updateMin(v*2, tl, tm, i, val, t);
+
+        }
+
+        else { updateMin(v*2+1, tm+1, tr, i, val, t); }
+
+        t[v]=min(t[v*2], t[v*2+1]);
+
+    }
+
+}
+
+
+
+int main () {
+
+    srand(time(0));
+
+    int n= rand()%201;
+
+    if (n<30) { n+=30; }
+
+    int a[n],stree[4*n],streeMax[4*n],streeMin[4*n];
+
+    for (int i=0; i<n; i++) {
+
+        a[i]= rand();
+
+    }
+
+    build( a, 1, 0, n-1, stree);
+
+    buildMax( a, 1, 0, n-1, streeMax);
+
+    buildMin( a, 1, 0, n-1, streeMin);
+
+
+
+
+
+    return 0;
+
+}
